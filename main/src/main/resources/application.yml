@@ -1,0 +1,62 @@
+spring:
+  application:
+    name: JStore
+
+  # Supabase PostgreSQL Configuration (Direct Connection/Session Mode)
+  datasource:
+    # Using Direct Connection (port 5432) for full Hibernate Session support
+    # This enables stateful transactions needed for Hibernate entity management
+    url: jdbc:postgresql://aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres
+    username: postgres.doxksbweeaxtewrlcvat
+    password: QbOaG8jWXkphbZnQ
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  # JPA/Hibernate Configuration
+  jpa:
+    hibernate:
+      ddl-auto: update  # Temporarily set to update to add missing columns (changed from validate for testing)
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        # Batch processing optimization
+        jdbc:
+          batch_size: 20
+          time_zone: UTC
+        order_inserts: true
+        order_updates: true
+
+# Application-specific JWT Configuration
+# NOTE: We are using OUR OWN JWT authentication (not Supabase Auth)
+# This secret is for signing OUR application's JWT tokens
+app:
+  # TODO: Generate a secure Base64-encoded secret (256+ bits)
+  # For now, using a temporary secret - CHANGE THIS IN PRODUCTION!
+  # To generate: openssl rand -base64 64
+  jwtSecret: ${JWT_SECRET:dG1wU2VjcmV0S2V5Rm9yRGV2ZWxvcG1lbnRPbmx5Q2hhbmdlVGhpc0luUHJvZHVjdGlvblBsZWFzZTEyMzQ1Njc4OTA=}
+  jwtExpirationMs: 86400000  # 24 hours in milliseconds
+
+# Server Configuration
+server:
+  port: 8080
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: on_param
+    include-exception: false
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.store.main: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.security: DEBUG
