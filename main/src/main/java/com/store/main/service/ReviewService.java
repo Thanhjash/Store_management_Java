@@ -67,6 +67,7 @@ public class ReviewService {
         review.setProduct(product);
         review.setRating(request.getRating());
         review.setComment(request.getComment());
+        review.setIsVerifiedPurchase(true);  // Mark as verified since purchase was verified
 
         return reviewRepository.save(review);
     }

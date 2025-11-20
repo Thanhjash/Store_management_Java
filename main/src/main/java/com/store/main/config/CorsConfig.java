@@ -22,9 +22,13 @@ public class CorsConfig {
         // Allow credentials (cookies, authorization headers)
         config.setAllowCredentials(true);
 
-        // Allow requests from any origin during development
-        // TODO: In production, specify exact frontend URLs
-        config.addAllowedOriginPattern("*");
+        // Allow specific origins (frontend)
+        // NOTE: When allowCredentials is true, wildcard patterns are NOT allowed
+        config.setAllowedOrigins(Arrays.asList(
+            "http://localhost:5173",  // Vite dev server
+            "http://localhost:3000",  // Alternative React dev server
+            "http://localhost:8081"   // Alternative port
+        ));
 
         // Allow all headers
         config.addAllowedHeader("*");

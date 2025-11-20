@@ -43,6 +43,30 @@ app:
   jwtSecret: ${JWT_SECRET:dG1wU2VjcmV0S2V5Rm9yRGV2ZWxvcG1lbnRPbmx5Q2hhbmdlVGhpc0luUHJvZHVjdGlvblBsZWFzZTEyMzQ1Njc4OTA=}
   jwtExpirationMs: 86400000  # 24 hours in milliseconds
 
+# Supabase Storage Configuration
+supabase:
+  url: https://doxksbweeaxtewrlcvat.supabase.co
+  # Service role key for backend file uploads
+  # IMPORTANT: Keep this secret! Use environment variable in production
+  # Get this key from: Supabase Dashboard → Project Settings → API → service_role key
+  key: ${SUPABASE_SERVICE_ROLE_KEY:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRveGtzYndlZWF4dGV3cmxjdmF0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2Mjk3MDU3OCwiZXhwIjoyMDc4NTQ2NTc4fQ.1SJ1rFezlhoVKEN2Znfp3hPFDwtp3NVVcy1qsFoKWFw}
+  storage:
+    buckets:
+      images: product-images
+      videos: product-videos
+    limits:
+      maxImageSize: 5242880   # 5 MB in bytes
+      maxVideoSize: 52428800  # 50 MB in bytes
+    allowedTypes:
+      images:
+        - image/jpeg
+        - image/png
+        - image/webp
+        - image/gif
+      videos:
+        - video/mp4
+        - video/webm
+
 # Server Configuration
 server:
   port: 8080

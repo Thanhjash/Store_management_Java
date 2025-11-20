@@ -3,12 +3,14 @@ package com.store.main.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -75,6 +77,9 @@ public class WebSecurityConfig {
                 // Disable CSRF (not needed for stateless JWT authentication)
                 .csrf(csrf -> csrf.disable())
 
+                // Enable CORS with default settings (uses CorsFilter bean)
+                .cors(Customizer.withDefaults())
+
                 // Handle unauthorized access
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(unauthorizedHandler))
@@ -85,6 +90,9 @@ public class WebSecurityConfig {
 
                 // Configure endpoint authorization
                 .authorizeHttpRequests(auth -> auth
+                        // Allow all OPTIONS requests (CORS preflight)
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
                         // Public endpoints (no authentication required)
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/public/**").permitAll()
