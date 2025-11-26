@@ -2,6 +2,13 @@ spring:
   application:
     name: JStore
 
+  # File Upload Configuration
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB      # Maximum file size per request
+      max-request-size: 100MB   # Maximum request size (file + metadata)
+
   # Supabase PostgreSQL Configuration (Direct Connection/Session Mode)
   datasource:
     # Using Direct Connection (port 5432) for full Hibernate Session support

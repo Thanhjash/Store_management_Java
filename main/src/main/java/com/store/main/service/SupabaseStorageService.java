@@ -189,7 +189,14 @@ public class SupabaseStorageService {
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", "Bearer " + supabaseServiceRoleKey);
             headers.set("apikey", supabaseServiceRoleKey);
-            headers.setContentType(org.springframework.http.MediaType.APPLICATION_OCTET_STREAM);
+
+            // Use the actual file's content type instead of application/octet-stream
+            String contentType = file.getContentType();
+            if (contentType != null && !contentType.isEmpty()) {
+                headers.setContentType(org.springframework.http.MediaType.parseMediaType(contentType));
+            } else {
+                headers.setContentType(org.springframework.http.MediaType.APPLICATION_OCTET_STREAM);
+            }
 
             HttpEntity<byte[]> entity = new HttpEntity<>(file.getBytes(), headers);
 
