@@ -104,6 +104,18 @@ JStore/
    - Create `product-images` bucket (public, max 5MB)
    - Create `product-videos` bucket (public, max 50MB)
 
+3. **Admin Account Setup:**
+   - **Default credentials** (ready to use):
+     ```
+     Username: jstore_admin
+     Password: Admin12345
+     ```
+   - **Important**: See [docs/ADMIN_SETUP.md](docs/ADMIN_SETUP.md) for:
+     - Creating new admin accounts
+     - Fixing admin password issues
+     - Granting admin roles
+     - Troubleshooting authentication
+
 ## Features Implemented
 
 ### Phase 1: Review System ✅
@@ -113,10 +125,15 @@ JStore/
 - Review validation and error handling
 
 ### Phase 2: Product Media Upload ✅
-- Upload multiple images and videos
-- Drag-and-drop file upload
-- Media gallery with navigation
-- Backward compatible with single image URL
+- **Multiple Media**: Upload multiple images and videos per product
+- **Drag-and-Drop**: Intuitive file upload interface
+- **Media Types**:
+  - Images: JPG, PNG, WebP, GIF (max 5MB each)
+  - Videos: MP4, WebM (max 50MB each)
+- **Gallery Carousel**: Navigate through product media on detail pages
+- **Supabase Storage**: Secure file storage with public CDN URLs
+- **Backward Compatible**: Supports legacy single imageUrl field
+- **Test Report**: See [docs/MEDIA_UPLOAD_TEST_REPORT.md](docs/MEDIA_UPLOAD_TEST_REPORT.md)
 
 ### Phase 3: Row Level Security (Optional)
 - Database-level security policies
@@ -228,10 +245,21 @@ npm run test
 ## Documentation
 
 See the `docs/` directory for detailed documentation:
-- `IMPLEMENTATION_STATUS.md` - Implementation progress and status
-- `FRONTEND_SETUP_COMPLETE.md` - Frontend setup details
-- `STORAGE_SETUP_GUIDE.md` - Supabase storage configuration
-- `CONFIGURATION_GUIDE.md` - Backend configuration guide
+
+### Quick Start
+- **[docs/README.md](docs/README.md)** - Complete documentation index
+- **[docs/ADMIN_SETUP.md](docs/ADMIN_SETUP.md)** - Admin account creation and troubleshooting
+- **[docs/CONFIGURATION_GUIDE.md](docs/CONFIGURATION_GUIDE.md)** - Backend configuration guide
+- **[docs/TESTING_AUTH.md](docs/TESTING_AUTH.md)** - Authentication testing guide
+
+### Implementation & Testing
+- **[docs/MEDIA_UPLOAD_TEST_REPORT.md](docs/MEDIA_UPLOAD_TEST_REPORT.md)** - Media upload feature test results
+- **[docs/IMPLEMENTATION_STATUS.md](docs/IMPLEMENTATION_STATUS.md)** - Feature implementation progress
+- **[docs/FRONTEND_SETUP_COMPLETE.md](docs/FRONTEND_SETUP_COMPLETE.md)** - Frontend setup details
+
+### Testing Scripts
+- **[docs/scripts/](docs/scripts/)** - Comprehensive API test scripts
+- **[docs/complete_test_results.md](docs/complete_test_results.md)** - Test execution results
 
 ## Troubleshooting
 

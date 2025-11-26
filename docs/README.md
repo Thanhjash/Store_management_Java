@@ -1,115 +1,213 @@
-# JStore Documentation
+# JStore Documentation Index
 
-This directory contains all the test scripts, API documentation, and backend fixes summary for the JStore E-Commerce API.
+Complete documentation for the JStore E-Commerce Platform.
 
-## Documentation Files
+---
 
-### 📋 Main Documentation
+## 📚 Quick Start Guides
 
-- **[FINAL_TEST_REPORT.md](./FINAL_TEST_REPORT.md)** (654 lines)
-  - Complete API documentation for frontend integration
-  - All 21+ API endpoints with request/response examples
-  - Authentication flow guide
-  - Frontend integration code samples
-  - Error handling documentation
+### For Developers
 
-- **[BACKEND_FIXES_SUMMARY.md](./BACKEND_FIXES_SUMMARY.md)**
-  - Summary of all backend issues and fixes
-  - Order cancellation bug fix details
-  - Compilation error resolutions
-  - Database schema updates
-  - Security configuration fixes
+1. **[Configuration Guide](CONFIGURATION_GUIDE.md)** - Database, Supabase, and environment setup
+2. **[Admin Setup](ADMIN_SETUP.md)** - Creating and managing admin accounts ⚠️ **Important!**
+3. **[Testing Auth](TESTING_AUTH.md)** - Authentication and authorization testing
 
-### 🧪 Test Scripts
+### For Testers
 
-- **[complete_backend_test.sh](./complete_backend_test.sh)**
-  - Comprehensive test suite for all 21+ API endpoints
-  - Tests authentication, products, cart, orders, and reviews
-  - Color-coded output with pass/fail indicators
-  - Usage: `./complete_backend_test.sh`
+1. **[Media Upload Test Report](MEDIA_UPLOAD_TEST_REPORT.md)** - Latest test results for image/video uploads
+2. **[Final Test Report (Clean)](FINAL_TEST_REPORT_CLEAN.md)** - Comprehensive system test results
 
-- **[test_cancel_order.sh](./test_cancel_order.sh)**
-  - Specific test for order cancellation functionality
-  - Creates order and attempts cancellation
-  - Verifies inventory restoration
-  - Usage: `./test_cancel_order.sh`
+---
 
-### 📊 Test Results
+## 📋 Project Documentation
 
-- **[complete_test_results.md](./complete_test_results.md)**
-  - Detailed results from the complete test suite
-  - Test pass/fail breakdown by category
-  - Response samples and error messages
+### Planning & Architecture
 
-- **[test_output_final.log](./test_output_final.log)**
-  - Raw test output with HTTP status codes
-  - Full response bodies for debugging
+- **[Overview](overview.md)** - High-level system architecture and design
+- **[Basic Plan](basic_plan.md)** - Initial project planning and requirements
+- **[Implementation Status](IMPLEMENTATION_STATUS.md)** - Current feature implementation status
 
-### 🗄️ Database Scripts
+### Development Guides
 
-- **[create_admin.sql](./create_admin.sql)**
-  - SQL script to create admin user
-  - Admin credentials: username=`admin`, password=`admin123`
-  - Assigns ROLE_ADMIN to the user
+- **[Backend Fixes Summary](BACKEND_FIXES_SUMMARY.md)** - History of backend bug fixes
+- **[Frontend Setup Complete](FRONTEND_SETUP_COMPLETE.md)** - Frontend installation and configuration
 
-## Quick Links
+---
 
-### Database Files
-- **Schema**: `/home/thanhjash/JStore/database/supabase/schema.sql`
-- **Seed Data**: `/home/thanhjash/JStore/database/supabase/seed.sql`
+## 🧪 Testing Resources
 
-### Project Files
-- **Main Code**: `/home/thanhjash/JStore/main/`
-- **Project README**: `/home/thanhjash/JStore/main/README.md`
+### Test Scripts
 
-## Test Results Summary
+All test scripts are located in `scripts/`:
 
-**Status**: ✅ **21/22 Tests Passed (95% Success Rate)**
+- **[complete_backend_test.sh](scripts/complete_backend_test.sh)** - Comprehensive backend API tests
+- **[test_fresh_account.sh](scripts/test_fresh_account.sh)** - Tests with new user account
+- **[test_cancel_order.sh](scripts/test_cancel_order.sh)** - Order cancellation workflow tests
 
-| Category | Tests | Status |
-|----------|-------|--------|
-| Authentication | 4 | ✅ 3/4 |
-| Public Product APIs | 6 | ✅ 6/6 |
-| Shopping Cart | 5 | ✅ 5/5 |
-| Order Management | 4 | ✅ 4/4 |
-| Review System | 5 | ✅ 5/5 |
+### Test Results
 
-## Key Fixes Implemented
+- **[Complete Test Results](complete_test_results.md)** - Summary of all test executions
 
-1. ✅ **Order Cancellation Bug** - Fixed NullPointerException with JOIN FETCH query
-2. ✅ **Review System** - Added productId field and DELIVERED status
-3. ✅ **Database Schema** - Added timestamp columns to Review entity
-4. ✅ **Security Config** - Made review viewing endpoints public
+---
 
-## Running Tests
+## 🗄️ Database Resources
 
-```bash
-# Run complete test suite
-cd /home/thanhjash/JStore/docs
-./complete_backend_test.sh
+### SQL Scripts
 
-# Test specific order cancellation
-./test_cancel_order.sh
+Important SQL scripts for admin setup:
+
+- **create_admin.sql** - Create new admin user
+- **fix_admin_password.sql** - Reset admin password
+- **grant_admin_role.sql** - Grant admin role to existing user
+
+**📖 See [Admin Setup Guide](ADMIN_SETUP.md) for detailed usage instructions.**
+
+---
+
+## 🎯 Feature-Specific Documentation
+
+### Phase 1: Core E-Commerce ✅
+- User authentication (JWT)
+- Product catalog with categories
+- Shopping cart management
+- Order processing
+- Inventory tracking
+
+### Phase 2: Media Upload System ✅
+- **Documentation**: [Media Upload Test Report](MEDIA_UPLOAD_TEST_REPORT.md)
+- Image upload (JPG, PNG, WebP, GIF)
+- Video upload (MP4, WebM)
+- Supabase Storage integration
+- Multiple media per product
+- Gallery carousel on product pages
+
+### Phase 3: Review System ✅
+- Customer product reviews
+- Star ratings (1-5)
+- Verified purchase badges
+- Review moderation
+
+---
+
+## 🚀 Quick Reference
+
+### Default Admin Credentials
+
+```
+Username: jstore_admin
+Password: Admin12345
 ```
 
-## API Base URL
+**⚠️ Change these in production!**
 
+### Default URLs
+
+- Backend API: http://localhost:8080
+- Frontend UI: http://localhost:5173
+- API Documentation: http://localhost:8080/swagger-ui.html
+
+### Environment Variables
+
+See [Configuration Guide](CONFIGURATION_GUIDE.md) for complete list.
+
+---
+
+## 📊 Test Accounts
+
+For testing purposes, use these accounts:
+
+### Admin Account
 ```
-http://localhost:8080
+Username: jstore_admin
+Password: Admin12345
+Roles: ROLE_ADMIN
 ```
 
-## Test Credentials
+### Customer Account
+```
+Username: customer1
+Password: password123
+Roles: ROLE_CUSTOMER
+```
 
-**Customer Account**:
-- Username: `customer1`
-- Password: `password123`
+---
 
-**Admin Account** (from seed data):
-- Username: `admin`
-- Password: `admin123`
+## 🔧 Development Workflow
 
-## Documentation Last Updated
+### Running the Application
 
-**Date**: 2025-11-13
-**Version**: 1.0
-**Status**: All critical bugs fixed, backend ready for production
+1. **Start Backend**:
+   ```bash
+   cd main
+   ./mvnw spring-boot:run
+   ```
+
+2. **Start Frontend**:
+   ```bash
+   cd frontend
+   npm run dev
+   ```
+
+3. **Run Tests**:
+   ```bash
+   cd docs/scripts
+   ./complete_backend_test.sh
+   ```
+
+### Testing Checklist
+
+- [ ] Authentication (login/register)
+- [ ] Product browsing
+- [ ] Shopping cart operations
+- [ ] Order placement
+- [ ] Media upload (images/videos)
+- [ ] Review submission
+- [ ] Admin operations
+
+---
+
+## 📝 Documentation Standards
+
+### File Naming Conventions
+
+- `UPPERCASE_WITH_UNDERSCORES.md` - Major documentation files
+- `lowercase_with_underscores.md` - Supporting documentation
+- `*.sh` - Test scripts (in scripts/)
+- `*.sql` - Database scripts
+
+### Documentation Updates
+
+When adding new features:
+1. Update relevant documentation file
+2. Add entry to this index (README.md)
+3. Include test results if applicable
+4. Update main project README.md
+
+---
+
+## 🐛 Known Issues & Fixes
+
+See [Backend Fixes Summary](BACKEND_FIXES_SUMMARY.md) for complete history.
+
+### Recent Fixes (November 2025)
+
+1. ✅ **Media Upload Button Form Submission** - Fixed buttons triggering parent form submit
+2. ✅ **Props Mismatch in Upload Components** - Corrected component prop passing
+3. ✅ **MIME Type Detection** - Fixed video upload MIME type validation
+4. ✅ **Product Edit Inventory Field** - Fixed field name mismatch (quantity vs stockQuantity)
+5. ✅ **Order Cancellation Bug** - Fixed NullPointerException with JOIN FETCH query
+
+---
+
+## 📞 Getting Help
+
+1. Check the relevant documentation file
+2. Review test reports for examples
+3. Check the main [README.md](../README.md) for setup instructions
+4. Review commit history for recent changes
+
+---
+
+**Last Updated**: November 26, 2025
+**Project Version**: 1.0.0
+**Status**: Active Development
