@@ -3,14 +3,15 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useProductStore } from '@/store/productStore'
 import { useCartStore } from '@/store/cartStore'
 import { useAuthStore } from '@/store/authStore'
-import { reviewService } from '@/services'
+import { reviewService, mediaService } from '@/services'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { ArrowLeft, ShoppingCart, Star } from 'lucide-react'
 import ReviewForm from '@/components/ReviewForm'
-import type { Review, ProductRating } from '@/types'
+import MediaGallery from '@/components/MediaGallery'
+import type { Review, ProductRating, ProductMedia } from '@/types'
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>()
@@ -22,14 +23,17 @@ export default function ProductDetail() {
   const [quantity, setQuantity] = useState(1)
   const [reviews, setReviews] = useState<Review[]>([])
   const [rating, setRating] = useState<ProductRating | null>(null)
+  const [productMedia, setProductMedia] = useState<ProductMedia[]>([])
   const [addingToCart, setAddingToCart] = useState(false)
   const [loadingReviews, setLoadingReviews] = useState(false)
+  const [loadingMedia, setLoadingMedia] = useState(false)
 
   useEffect(() => {
     if (id) {
       fetchProductById(Number(id))
       loadReviews()
       loadRating()
+      loadMedia()
     }
   }, [id, fetchProductById])
 
@@ -53,6 +57,21 @@ export default function ProductDetail() {
       setRating(ratingData)
     } catch (error) {
       console.error('Failed to load rating:', error)
+    }
+  }
+
+  const loadMedia = async () => {
+    if (!id) return
+    setLoadingMedia(true)
+    try {
+      const mediaData = await mediaService.getProductMedia(Number(id))
+      setProductMedia(mediaData)
+    } catch (error) {
+      console.error('Failed to load product media:', error)
+      // It's okay if media fails to load - product might not have media yet
+      setProductMedia([])
+    } finally {
+      setLoadingMedia(false)
     }
   }
 
@@ -111,18 +130,14 @@ export default function ProductDetail() {
       </Link>
 
       <div className="grid md:grid-cols-2 gap-8 mb-12">
-        {/* Product Image */}
+        {/* Product Media Gallery */}
         <div className="aspect-square overflow-hidden rounded-lg bg-muted">
-          {currentProduct.imageUrl ? (
-            <img
-              src={currentProduct.imageUrl}
-              alt={currentProduct.name}
-              className="h-full w-full object-cover"
-            />
-          ) : (
+          {loadingMedia ? (
             <div className="h-full w-full flex items-center justify-center">
-              <p className="text-muted-foreground">No image available</p>
+              <p className="text-muted-foreground">Loading media...</p>
             </div>
+          ) : (
+            <MediaGallery product={currentProduct} media={productMedia} />
           )}
         </div>
 

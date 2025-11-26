@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
-import { productService } from '@/services'
+import { productService, mediaService } from '@/services'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowLeft } from 'lucide-react'
-import type { Category, Product } from '@/types'
+import { ArrowLeft, X, Image as ImageIcon, Video } from 'lucide-react'
+import ImageUpload from '@/components/admin/ImageUpload'
+import VideoUpload from '@/components/admin/VideoUpload'
+import type { Category, Product, ProductMedia } from '@/types'
 
 export default function ProductForm() {
   const { id } = useParams<{ id: string }>()
@@ -25,8 +27,11 @@ export default function ProductForm() {
     stockQuantity: '',
   })
   const [categories, setCategories] = useState<Category[]>([])
+  const [productMedia, setProductMedia] = useState<ProductMedia[]>([])
+  const [imageUploadMethod, setImageUploadMethod] = useState<'url' | 'upload'>('url')
   const [isLoading, setIsLoading] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isUploadingMedia, setIsUploadingMedia] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -38,6 +43,7 @@ export default function ProductForm() {
     loadCategories()
     if (isEditMode && id) {
       loadProduct(Number(id))
+      loadMedia(Number(id))
     }
   }, [isAuthenticated, user, navigate, isEditMode, id])
 
@@ -68,6 +74,66 @@ export default function ProductForm() {
       setError(error.response?.data?.message || 'Failed to load product')
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const loadMedia = async (productId: number) => {
+    try {
+      const media = await mediaService.getProductMedia(productId)
+      setProductMedia(media)
+    } catch (error) {
+      console.error('Failed to load product media:', error)
+      setProductMedia([])
+    }
+  }
+
+  const handleImageUpload = async (file: File) => {
+    if (!isEditMode || !id) {
+      alert('Please save the product first before uploading images')
+      return
+    }
+
+    setIsUploadingMedia(true)
+    try {
+      const uploadedMedia = await mediaService.uploadImage(Number(id), file, '', productMedia.length)
+      setProductMedia([...productMedia, uploadedMedia])
+      alert('Image uploaded successfully!')
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Failed to upload image')
+    } finally {
+      setIsUploadingMedia(false)
+    }
+  }
+
+  const handleVideoUpload = async (file: File) => {
+    if (!isEditMode || !id) {
+      alert('Please save the product first before uploading videos')
+      return
+    }
+
+    setIsUploadingMedia(true)
+    try {
+      const uploadedMedia = await mediaService.uploadVideo(Number(id), file, '', productMedia.length)
+      setProductMedia([...productMedia, uploadedMedia])
+      alert('Video uploaded successfully!')
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Failed to upload video')
+    } finally {
+      setIsUploadingMedia(false)
+    }
+  }
+
+  const handleDeleteMedia = async (mediaId: number) => {
+    if (!confirm('Are you sure you want to delete this media?')) {
+      return
+    }
+
+    try {
+      await mediaService.deleteMedia(mediaId)
+      setProductMedia(productMedia.filter(m => m.id !== mediaId))
+      alert('Media deleted successfully!')
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Failed to delete media')
     }
   }
 
@@ -248,31 +314,134 @@ export default function ProductForm() {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="imageUrl">Image URL</Label>
-              <Input
-                id="imageUrl"
-                name="imageUrl"
-                type="url"
-                value={formData.imageUrl}
-                onChange={handleChange}
-                placeholder="https://example.com/image.jpg"
-              />
-              <p className="text-sm text-muted-foreground">
-                Enter a URL to an image, or leave blank for no image
-              </p>
-              {formData.imageUrl && (
-                <div className="mt-2">
-                  <p className="text-sm font-medium mb-2">Image Preview:</p>
-                  <img
-                    src={formData.imageUrl}
-                    alt="Preview"
-                    className="w-32 h-32 object-cover rounded border"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none'
-                    }}
+            {/* Product Image Section */}
+            <div className="space-y-4 border-t pt-6">
+              <div className="flex items-center justify-between">
+                <Label className="text-lg font-semibold">Product Media</Label>
+                {isEditMode && (
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant={imageUploadMethod === 'url' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setImageUploadMethod('url')}
+                    >
+                      URL
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={imageUploadMethod === 'upload' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setImageUploadMethod('upload')}
+                    >
+                      Upload Files
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              {/* URL Input Method */}
+              {(!isEditMode || imageUploadMethod === 'url') && (
+                <div className="space-y-2">
+                  <Label htmlFor="imageUrl">Image URL (Legacy)</Label>
+                  <Input
+                    id="imageUrl"
+                    name="imageUrl"
+                    type="url"
+                    value={formData.imageUrl}
+                    onChange={handleChange}
+                    placeholder="https://example.com/image.jpg"
                   />
+                  <p className="text-sm text-muted-foreground">
+                    Enter a URL to an image, or leave blank for no image
+                  </p>
+                  {formData.imageUrl && (
+                    <div className="mt-2">
+                      <p className="text-sm font-medium mb-2">Image Preview:</p>
+                      <img
+                        src={formData.imageUrl}
+                        alt="Preview"
+                        className="w-32 h-32 object-cover rounded border"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none'
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
+              )}
+
+              {/* File Upload Method (only in edit mode) */}
+              {isEditMode && imageUploadMethod === 'upload' && (
+                <div className="space-y-6">
+                  {/* Image Upload */}
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <ImageIcon className="h-4 w-4" />
+                      <Label>Upload Images</Label>
+                    </div>
+                    <ImageUpload
+                      onImageSelect={handleImageUpload}
+                      disabled={isUploadingMedia}
+                    />
+                  </div>
+
+                  {/* Video Upload */}
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Video className="h-4 w-4" />
+                      <Label>Upload Videos</Label>
+                    </div>
+                    <VideoUpload
+                      onVideoSelect={handleVideoUpload}
+                      disabled={isUploadingMedia}
+                    />
+                  </div>
+
+                  {/* Uploaded Media Preview */}
+                  {productMedia.length > 0 && (
+                    <div className="space-y-2">
+                      <Label>Uploaded Media ({productMedia.length})</Label>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                        {productMedia.map((media) => (
+                          <div key={media.id} className="relative group">
+                            {media.mediaType === 'IMAGE' ? (
+                              <img
+                                src={media.url}
+                                alt={media.altText || 'Product media'}
+                                className="w-full h-32 object-cover rounded border"
+                              />
+                            ) : (
+                              <div className="w-full h-32 bg-gray-100 rounded border flex items-center justify-center">
+                                <Video className="h-8 w-8 text-gray-400" />
+                              </div>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteMedia(media.id)}
+                              className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <X className="h-4 w-4" />
+                            </button>
+                            <p className="text-xs text-muted-foreground mt-1 truncate">
+                              {media.mediaType} #{media.displayOrder + 1}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <p className="text-sm text-muted-foreground">
+                    💡 Tip: Save the product first, then upload images and videos using the buttons above.
+                  </p>
+                </div>
+              )}
+
+              {!isEditMode && (
+                <p className="text-sm text-muted-foreground bg-blue-50 p-3 rounded">
+                  💡 Create the product first, then you can upload multiple images and videos in edit mode.
+                </p>
               )}
             </div>
 
