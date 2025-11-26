@@ -16,6 +16,10 @@ export default function ProductForm() {
   const navigate = useNavigate()
   const { user, isAuthenticated } = useAuthStore()
 
+  // Debug logging
+  console.log('ProductForm rendered - id from useParams:', id, 'type:', typeof id)
+  console.log('Current URL:', window.location.href)
+
   const isEditMode = !!id
 
   const [formData, setFormData] = useState({
@@ -31,7 +35,6 @@ export default function ProductForm() {
   const [imageUploadMethod, setImageUploadMethod] = useState<'url' | 'upload'>('url')
   const [isLoading, setIsLoading] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isUploadingMedia, setIsUploadingMedia] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -84,42 +87,6 @@ export default function ProductForm() {
     } catch (error) {
       console.error('Failed to load product media:', error)
       setProductMedia([])
-    }
-  }
-
-  const handleImageUpload = async (file: File) => {
-    if (!isEditMode || !id) {
-      alert('Please save the product first before uploading images')
-      return
-    }
-
-    setIsUploadingMedia(true)
-    try {
-      const uploadedMedia = await mediaService.uploadImage(Number(id), file, '', productMedia.length)
-      setProductMedia([...productMedia, uploadedMedia])
-      alert('Image uploaded successfully!')
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to upload image')
-    } finally {
-      setIsUploadingMedia(false)
-    }
-  }
-
-  const handleVideoUpload = async (file: File) => {
-    if (!isEditMode || !id) {
-      alert('Please save the product first before uploading videos')
-      return
-    }
-
-    setIsUploadingMedia(true)
-    try {
-      const uploadedMedia = await mediaService.uploadVideo(Number(id), file, '', productMedia.length)
-      setProductMedia([...productMedia, uploadedMedia])
-      alert('Video uploaded successfully!')
-    } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to upload video')
-    } finally {
-      setIsUploadingMedia(false)
     }
   }
 
@@ -381,8 +348,11 @@ export default function ProductForm() {
                       <Label>Upload Images</Label>
                     </div>
                     <ImageUpload
-                      onImageSelect={handleImageUpload}
-                      disabled={isUploadingMedia}
+                      productId={Number(id)}
+                      onUploadSuccess={(media) => {
+                        setProductMedia([...productMedia, media])
+                      }}
+                      displayOrder={productMedia.length}
                     />
                   </div>
 
@@ -393,8 +363,11 @@ export default function ProductForm() {
                       <Label>Upload Videos</Label>
                     </div>
                     <VideoUpload
-                      onVideoSelect={handleVideoUpload}
-                      disabled={isUploadingMedia}
+                      productId={Number(id)}
+                      onUploadSuccess={(media) => {
+                        setProductMedia([...productMedia, media])
+                      }}
+                      displayOrder={productMedia.length}
                     />
                   </div>
 
