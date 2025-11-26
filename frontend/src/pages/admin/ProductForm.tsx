@@ -68,7 +68,7 @@ export default function ProductForm() {
         price: product.price.toString(),
         categoryId: product.categoryId.toString(),
         imageUrl: product.imageUrl || '',
-        stockQuantity: inventory.quantity.toString(),
+        stockQuantity: inventory.stockQuantity.toString(),
       })
     } catch (error: any) {
       setError(error.response?.data?.message || 'Failed to load product')
@@ -184,7 +184,7 @@ export default function ProductForm() {
         // Update inventory
         const currentInventory = await productService.getProductInventory(Number(id))
         const newQuantity = parseInt(formData.stockQuantity)
-        if (currentInventory.quantity !== newQuantity) {
+        if (currentInventory.stockQuantity !== newQuantity) {
           await productService.updateInventory(Number(id), newQuantity)
         }
 
