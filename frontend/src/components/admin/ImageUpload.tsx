@@ -140,7 +140,7 @@ export default function ImageUpload({ productId, onUploadSuccess, displayOrder =
               <p className="text-sm text-muted-foreground mb-2">
                 {file?.name} ({(file!.size / 1024).toFixed(1)} KB)
               </p>
-              <Button onClick={handleUpload} disabled={uploading}>
+              <Button type="button" onClick={handleUpload} disabled={uploading}>
                 {uploading ? 'Uploading...' : 'Upload Image'}
               </Button>
             </div>
@@ -157,6 +157,7 @@ export default function ImageUpload({ productId, onUploadSuccess, displayOrder =
               </p>
             </div>
             <Button
+              type="button"
               variant="outline"
               onClick={() => fileInputRef.current?.click()}
             >

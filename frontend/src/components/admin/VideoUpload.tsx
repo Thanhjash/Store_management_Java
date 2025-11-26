@@ -167,7 +167,7 @@ export default function VideoUpload({ productId, onUploadSuccess, displayOrder =
                 </div>
               )}
 
-              <Button onClick={handleUpload} disabled={uploading}>
+              <Button type="button" onClick={handleUpload} disabled={uploading}>
                 {uploading ? `Uploading... ${uploadProgress}%` : 'Upload Video'}
               </Button>
             </div>
@@ -184,6 +184,7 @@ export default function VideoUpload({ productId, onUploadSuccess, displayOrder =
               </p>
             </div>
             <Button
+              type="button"
               variant="outline"
               onClick={() => fileInputRef.current?.click()}
             >
